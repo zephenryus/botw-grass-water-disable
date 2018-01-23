@@ -1,7 +1,8 @@
-import argparse
-from shutil import copyfile
 import os
+import sys
+import argparse
 import struct
+from shutil import copyfile
 
 
 def disable_tscb(path, is_water, is_grass, is_backup):
@@ -53,6 +54,13 @@ def disable_tscb(path, is_water, is_grass, is_backup):
     for i in range(0, area_array_length):
         area_array_offsets.append(file.tell() + struct.unpack('>I', file.read(0x04))[0])
 
+    if is_water and is_grass:
+        print('Disabling water and grass layers...')
+    elif is_water:
+        print('Disabling water layer...')
+    elif is_grass:
+        print('Disabling grass layer...')
+
     # disable grass and / or water in area array
     for i in range(0, len(area_array_offsets)):
         # seek to area array entry
@@ -70,6 +78,7 @@ def disable_tscb(path, is_water, is_grass, is_backup):
                 continue
 
             if is_water:
+
                 extra_info_array = []
 
                 for index in range(0, extra_info_array_length):
@@ -114,8 +123,10 @@ def disable_tscb(path, is_water, is_grass, is_backup):
 
                 continue
 
+    print('Done.')
+
     file.close()
-    exit(1)
+    sys.exit(1)
 
 
 def main():
